@@ -1,0 +1,6 @@
+{
+	"name" : "dlang",
+	"description" : "A minimal D bundle.",
+	"dependencies" : {
+	}
+}
