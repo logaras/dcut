@@ -1,6 +1,6 @@
 {
-	"name" : "dlang",
-	"description" : "A minimal D bundle.",
+	"name" : "dcut",
+	"description" : "A minimal cut tool.",
 	"dependencies" : {
 	}
 }
