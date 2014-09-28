@@ -70,6 +70,17 @@ void main(string[] args)
    		
    		}
    	
+   	int dIndex = arg.indexOf("-d");
+   	if(dIndex == 0){
+
+   		delimiter = to!char(arg["-d".length .. arg.length]);
+   		
+   		writefln("Delimiter is %s",delimiter);
+   		
+   		}
+
+   	
+   	
    	
    	if(cutByteStart>cutByteStop){
    		writefln("Error!");
@@ -111,9 +122,10 @@ void main(string[] args)
 				writef(line.split(delimiter)[fieldInd]);
 				writef("\t");		
 				}
-			 
+		
+		writefln("");	 
 			}
-		writefln("");
+		
 	}
 	
 
