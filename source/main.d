@@ -208,47 +208,83 @@ private options processArguments(string[] args){
 	return currentOptions;
 	}
 
+// Performs a byte operation as described in the options argument
 private void performByteOperation(options currentOptions){
 	
-		int lineByteStart = currentOptions.cutByteStart;
-		int lineByteStop = currentOptions.cutByteStop;
-foreach(line; File(currentOptions.filename).byLine())
+		int lineByteStart;
+		int lineByteStop;
+		
+		// Read the file, line by line
+		foreach(line; File(currentOptions.filename).byLine())
 		{	
-		if(lineByteStop > line.length){
-			lineByteStop = line.length;
-			}
-		if(lineByteStart >line.length){
-			lineByteStart = line.length;
-			}
-		
-		
-		if(!currentOptions.cOperation){
-			writeln(line[lineByteStart-1 ..  lineByteStop]);
-			}
-		 else{
-		 	
-			write(line[0 .. lineByteStart-1]);
-			write(line[lineByteStop .. $]);
-			write("\n");
-			}
+			// Try the user provided range of bytes
+			lineByteStart = currentOptions.cutByteStart;
+			lineByteStop = currentOptions.cutByteStop;
+			
+			// The line is shorter than last-byte;
+			if(lineByteStop > line.length){
+				// Go as far as the line's length
+				lineByteStop = line.length;
+				}
+			// The line is shorter than the first-byte
+			if(lineByteStart >line.length){
+				// Actually ignore the line
+				lineByteStart = line.length;
+				}
+			
+			
+			// It not a complementary operation
+			if(!currentOptions.cOperation){
+				writeln(line[lineByteStart-1 ..  lineByteStop]);
+				}
+			
+			// It's a complementary operation
+			 else{ 	
+			 	// from line start to byte-start
+				write(line[0 .. lineByteStart-1]);
+				
+				// from byte-stop to line length
+				write(line[lineByteStop .. $]);
+				write("\n");
+				}
 		 }
 	}
 
+
+// Performs a field operation as described in the options argument
 private void performFieldOperation(options currentOptions){
-	foreach(line; File(currentOptions.filename).byLine())
-			{
+	
+	// This is not a complementary operation
 	if(!currentOptions.cOperation){
-			int fieldsRange = currentOptions.cutFieldStop - currentOptions.cutFieldStart; 
-			for(int fieldInd = currentOptions.cutFieldStart-1; fieldInd<currentOptions.cutFieldStop;fieldInd++){
-				writef(line.split(currentOptions.delimiter)[fieldInd]);
+		
+
+			// Read the file, line by line
+			foreach(line; File(currentOptions.filename).byLine())
+			{
+			// Split the line according to the delimiter
+			char[][] currLine =line.split(currentOptions.delimiter); 
+			
+			// check if line has less fields than the user indicated
+			// if that is the case, go as far as the line allows
+			int lastField = currentOptions.cutFieldStop;
+			if(lastField > currLine.length){
+				lastField = currLine.length;
+				}
+					
+			for(int fieldInd = currentOptions.cutFieldStart-1; fieldInd<lastField;fieldInd++){
+				writef(currLine[fieldInd]);
 				writef("\t");		
 				}
 			writefln("");			
 		}
-			
-		if(currentOptions.cOperation){
+	}	
+		// this is a complementary operation
+		else {
+			foreach(line; File(currentOptions.filename).byLine())
+			{
+				char[][] currLine =line.split(currentOptions.delimiter); 
 			for (int fieldInd = 0; fieldInd<currentOptions.cutFieldStart-1;fieldInd++){
-				writef(line.split(currentOptions.delimiter)[fieldInd]);
+				writef(currLine[fieldInd]);
 				writef("\t");
 				}
 			
@@ -256,7 +292,7 @@ private void performFieldOperation(options currentOptions){
 			int maxFields = line.split(currentOptions.delimiter).length;
 			
 			for (int fieldInd = currentOptions.cutFieldStop; fieldInd<maxFields;fieldInd++){
-				writef(line.split(currentOptions.delimiter)[fieldInd]);
+				writef(currLine[fieldInd]);
 				writef("\t");
 				}
 			writefln("");	
