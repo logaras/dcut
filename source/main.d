@@ -4,29 +4,41 @@ import std.file;
 import std.string;
 import std.conv;
  
+ // The struct containing all the necessary parameters for the execution of the command. 
  struct options{
  		// Should perform the byte operation
  		bool bOperation = false;
-	   int cutByteStart = 0;
-	   int cutByteStop = 0; 
+ 		
+ 		// The byte to start the in the byte operation
+ 		int cutByteStart = 0;
+ 		
+ 		// The byte to stop in the byte operation
+ 		int cutByteStop = 0; 
+	   
 	   
 	   // Should perform the field operation
 	   bool fOperation = false;
+	   
+	   // The field number to start
 	   int cutFieldStart = 0;
+	   
+	   // The field number to stop
 	   int cutFieldStop = 0;
+	   
+	   // The field delimiter. Using tab for default
 	   char delimiter = '\t';
 	   
 	   // Should perform the delimiter-based field operation
 	   bool dOperation = false;
 	   
-	   // Should apply inversion
+	   // Should apply complementary operation
 	   bool cOperation = false;
 	   
 	   // The path of the file to be processed
 	   string filename;
 	   
-	   // Argument parsing was succeful
-	   bool parsedSucceful = true;
+	   // Argument parsing was successful
+	   bool parsedOk = true;
 }
    
 void main(string[] args)
@@ -35,8 +47,8 @@ void main(string[] args)
 	// Extract the options of the current execution
 	options currentOptions = processArguments(args);
 	
-	// In case of unsucceful parsing, do not process with any processing.
-	if(!currentOptions.parsedSucceful){
+	// In case of unsuccessful parsing, do not process with any processing.
+	if(!currentOptions.parsedOk){
 		return; 
 			}
 	
@@ -54,7 +66,7 @@ void main(string[] args)
 // Prints an error message when parsing of the arguments goes wrong.
 private void printError(string errormsg){
 	writefln("Error while executing dcut command. %s.",errormsg);
-	writefln("Execution examples");
+	writefln("\nExecution examples");
 	writefln("dcut -b1 FILENAME");
 	writefln("dcut -b2-3 FILENAME");
 	writefln("dcut -b2-3 --complement FILENAME");
@@ -75,7 +87,7 @@ private options processArguments(string[] args){
 		File(currentOptions.filename);
 	} catch(Exception ex){
 		printError("No such file name");
-		currentOptions.parsedSucceful = false;
+		currentOptions.parsedOk = false;
 		return currentOptions;
    				
 		}
@@ -101,7 +113,7 @@ private options processArguments(string[] args){
    			currentOptions.cutByteStop = currentOptions.cutByteStart;
    			} catch (Exception ex){
    				printError("Could not parse byte selection");
-   				currentOptions.parsedSucceful = false;
+   				currentOptions.parsedOk = false;
    				return currentOptions;
    				}
    			
@@ -115,7 +127,7 @@ private options processArguments(string[] args){
    			currentOptions.cutByteStop = to!int(bArg.split("-")[1]);
    			}catch(Exception ex){
    				printError("Could not parse byte range");
-   				currentOptions.parsedSucceful = false;
+   				currentOptions.parsedOk = false;
    				return currentOptions;
    				}
    		}
@@ -135,7 +147,7 @@ private options processArguments(string[] args){
    			currentOptions.cutFieldStop = currentOptions.cutFieldStart;
    			} catch (Exception ex){
    			printError("Could not parse field selection");
-   				currentOptions.parsedSucceful = false;
+   				currentOptions.parsedOk = false;
    				return currentOptions;	
    				}
    			}
@@ -145,7 +157,7 @@ private options processArguments(string[] args){
    			currentOptions.cutFieldStop = to!int(fArg.split("-")[1]);
    			} catch (Exception ex){
    				printError("Could not parse field range");
-   				currentOptions.parsedSucceful = false;
+   				currentOptions.parsedOk = false;
    				return currentOptions;
    				} 
    		}
@@ -160,7 +172,7 @@ private options processArguments(string[] args){
    		currentOptions.delimiter = to!char(arg["-d".length .. arg.length]);   		
    		} catch(Exception ex){
    			printError("Could not find a single character delimiter");
-   				currentOptions.parsedSucceful = false;
+   				currentOptions.parsedOk = false;
    				return currentOptions;
    			}	
    		}
@@ -178,14 +190,14 @@ private options processArguments(string[] args){
 	   	// Starting byte greater than finishing field
 	   	if(currentOptions.cutByteStart>currentOptions.cutByteStop){
 	   		printError("Invalid range");
-	   		currentOptions.parsedSucceful = false;
+	   		currentOptions.parsedOk = false;
 	   		return currentOptions;
 	   		}
 	   	
 	   	// Starting field greater than finishing field
 	   	if(currentOptions.cutFieldStart>currentOptions.cutFieldStop){
 	   		printError("Invalid range");
-	   		currentOptions.parsedSucceful = false;
+	   		currentOptions.parsedOk = false;
 	   		return currentOptions;
 	   		}
 	   	
@@ -193,14 +205,14 @@ private options processArguments(string[] args){
 	   	// Byte and field operations
 	   	if(currentOptions.bOperation && currentOptions.fOperation){
 	   		printError("Could not apply to different operations");
-	   		currentOptions.parsedSucceful = false;
+	   		currentOptions.parsedOk = false;
 	   		return currentOptions;
 	   		}
 	   	
 	   	// Byte and special delimiter operations
 	   if(currentOptions.bOperation && currentOptions.delimiter!='\t'){
 	   		printError("Could not apply delimiter to byte operation");
-	   		currentOptions.parsedSucceful = false;
+	   		currentOptions.parsedOk = false;
 	   		return currentOptions;
 	   		}		
    	
@@ -319,18 +331,3 @@ private void performFieldOperation(options currentOptions){
 			}
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
