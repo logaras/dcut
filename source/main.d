@@ -282,23 +282,43 @@ private void performFieldOperation(options currentOptions){
 		else {
 			foreach(line; File(currentOptions.filename).byLine())
 			{
-				char[][] currLine =line.split(currentOptions.delimiter); 
-			for (int fieldInd = 0; fieldInd<currentOptions.cutFieldStart-1;fieldInd++){
-				writef(currLine[fieldInd]);
-				writef("\t");
+				char[][] currLine = line.split(currentOptions.delimiter); 
+				
+				// Assume that the line won't contain anything 
+				bool emptyLine = true;
+				
+				// The margins are out of the line's borders. Do nothing.
+				if(currLine.length < currentOptions.cutFieldStart-1 || currLine.length < currentOptions.cutFieldStop){
+					return;
+					}
+				
+				// Start from the begining of the line, go till the staring point
+				for (int fieldInd = 0; fieldInd<currentOptions.cutFieldStart-1;fieldInd++){
+					writef(currLine[fieldInd]);
+					writef("\t");
+					
+					// Obviously the line is no more empty/
+					emptyLine=false;
+					}
+				
+				// Total number of fields in the line
+				int maxFields = line.split(currentOptions.delimiter).length;
+				
+				// Start from the end point till the end of the line.
+				for (int fieldInd = currentOptions.cutFieldStop; fieldInd<maxFields;fieldInd++){
+					writef(currLine[fieldInd]);
+					writef("\t");
+					
+					// Again, the line is non-empty
+					emptyLine=false;
+					}
+				// Print the newline character if the line is non-empty
+				if(!emptyLine){
+				writefln("");
 				}
-			
-			//total number of fields
-			int maxFields = line.split(currentOptions.delimiter).length;
-			
-			for (int fieldInd = currentOptions.cutFieldStop; fieldInd<maxFields;fieldInd++){
-				writef(currLine[fieldInd]);
-				writef("\t");
-				}
-			writefln("");	
+			}
 			}
 		}
-			}
 
 
 
