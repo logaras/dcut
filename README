@@ -1,17 +1,9 @@
-
-The following task should be implemented in D or C++, unless we've specifically
-discussed with you that you should complete it in another language.
-
-Implement a reduced functionality version of the linux command line tool cut
-[1]. The following options should be present:
+A reduced functionality version of the linux command line tool cut
+[1].
 
 -b to output the specified bytes of each line from the file.
 -f to output the specified delimited fields of each line from the file.
 -d to specify the field delimiter (defaults to TAB if not specified).
 --complement to invert the set of selected bytes / fields.
-
-The application does not need to worry about handling multi-byte characters, and
-only needs to be able to read from files - don't worry about reading from stdin.
-
 
 [1] – Cut Tool. http://linux.die.net/man/1/cut
